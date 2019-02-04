@@ -190,6 +190,7 @@ public:
     void testTdf119015();
     void testTdf120028();
     void testTdf120028b();
+    void testDescriptionImport();
 
     CPPUNIT_TEST_SUITE(SdImportTest);
 
@@ -274,6 +275,7 @@ public:
     CPPUNIT_TEST(testTdf119015);
     CPPUNIT_TEST(testTdf120028);
     CPPUNIT_TEST(testTdf120028b);
+    CPPUNIT_TEST(testDescriptionImport);
 
     CPPUNIT_TEST_SUITE_END();
 };
@@ -2632,6 +2634,23 @@ void SdImportTest::testTdf120028b()
     CPPUNIT_ASSERT_EQUAL(static_cast<sal_Int32>(0xffffff), nCharColor);
 
     xDocShRef->DoClose();
+}
+
+void SdImportTest::testDescriptionImport()
+{
+    sd::DrawDocShellRef xDocShRef
+        = loadURL(m_directories.getURLFromSrc("/sd/qa/unit/data/pptx/altdescription.pptx"), PPTX);
+
+    uno::Reference<beans::XPropertySet> xPropertySet(
+        getShapeFromPage(/*nShape=*/2, /*nPage=*/0, xDocShRef));
+    OUString sDesc;
+
+    xPropertySet->getPropertyValue("Description") >>= sDesc;
+
+    CPPUNIT_ASSERT_EQUAL(OUString("We Can Do It!"), sDesc);
+
+    xDocShRef->DoClose();
+
 }
 
 CPPUNIT_TEST_SUITE_REGISTRATION(SdImportTest);
